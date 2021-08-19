@@ -2,15 +2,18 @@
   "name": "speedtest-stats-react",
   "version": "0.1.0",
   "private": true,
-  "main": "index.tsx",
   "dependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/jest": "^27.0.1",
     "@types/node": "^16.6.2",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
-    "@types/jest": "^27.0.1",
     "axios": "^0.21.1",
     "bootstrap": "^5.1.0",
     "moment": "^2.29.1",
+    "prettier": "^2.3.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
@@ -20,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write ./src/*"
   },
   "eslintConfig": {
     "extends": [
