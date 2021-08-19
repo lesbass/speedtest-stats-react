@@ -1,40 +1,42 @@
 import {StatRow} from "../interfaces/StatRow";
-import moment, {Moment} from "moment";
+import moment from "moment";
+import 'moment/locale/it'
 
 export const average = (arr: number[]) => arr.reduce((p, c) => p + c, 0) / arr.length
 export const processRows = (data: string) => {
     const response: StatRow[] = []
 
-    let tempData: Moment | null
-    let tempPing: number | null
-    let tempUpload: number | null
-    let tempDownload: number | null
+    const isItemValid = (item: StatRow) => item.Ping && item.Upload && item.Download && item.DataOra
+    const addToResponse = (item: StatRow) => {
+        isItemValid(item) && response.push(item)
+        tempItem = resetTempItem()
+    }
+    const resetTempItem = (): StatRow => {
+        return {
+            Ping: undefined,
+            Download: undefined,
+            Upload: undefined,
+            DataOra: undefined
+        }
+    }
+
+    let tempItem = resetTempItem()
     const arrayOfLines = data.match(/[^\r\n]+/g) ?? []
     arrayOfLines.forEach(row => {
         if (row.startsWith("--")) {
-            response.push(
-                {
-                    Ping: tempPing,
-                    DataOra: tempData,
-                    Upload: tempUpload,
-                    Download: tempDownload,
-                })
-
-            tempPing = 0
-            tempData = null
-            tempUpload = 0
-            tempDownload = 0
+            addToResponse(tempItem)
         } else if (row.startsWith("Ping")) {
-            tempPing = +(row.split(' ')[1])
+            tempItem.Ping = +(row.split(' ')[1])
         } else if (row.startsWith("Download")) {
-            tempDownload = +(row.split(' ')[1])
+            tempItem.Download = +(row.split(' ')[1])
         } else if (row.startsWith("Upload")) {
-            tempUpload = +(row.split(' ')[1])
+            tempItem.Upload = +(row.split(' ')[1])
         } else {
-            tempData = moment(row, "ddd D MMM YYYY, HH.mm.ss, Z")
+            tempItem.DataOra = moment(row, "ddd D MMM YYYY, HH.mm.ss, Z")
         }
     })
+    addToResponse(tempItem)
+
     return response
-        .filter(item => item.DataOra)
         .sort((a, b) => +(b.DataOra ?? moment()).format('YYYYMMDDHHmm') - +(a.DataOra ?? moment()).format('YYYYMMDDHHmm'))
 }
