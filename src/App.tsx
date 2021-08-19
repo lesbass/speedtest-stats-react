@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import axios from "axios"
+import 'moment/locale/it'
+
+import RenderData from "./components/RenderData";
+import {StatRow} from "./interfaces/StatRow";
+import {processRows} from "./lib/utils";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [data, setData] = useState<StatRow[] | undefined>()
+    useEffect(() => {
+        const remoteUrl = process.env.REACT_APP_REMOTE_URL ?? "#"
+        console.log("remoteUrl", remoteUrl)
+        axios.get<string>(remoteUrl).then(res => {
+            setData(processRows(res.data))
+        })
+    }, [])
+
+    return (
+        <div className="container">
+            <main role="main" className="pb-3">
+                {data ? <RenderData data={data}/> : "Loading..."}
+            </main>
+        </div>
+    )
 }
 
-export default App;
+export default App
